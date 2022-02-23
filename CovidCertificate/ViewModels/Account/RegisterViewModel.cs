@@ -7,7 +7,6 @@
     using System.Threading.Tasks;
     public class RegisterViewModel
     {
-
         [Required]
         [DataType(DataType.Text)]
         [Display(Name = "Username")]

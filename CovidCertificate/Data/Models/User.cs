@@ -12,7 +12,7 @@ namespace CovidCertificate.Data.Models
         {
             this.Certificates = new List<Certificate>();
         }
-        public string Name { get; set; }
+        public string FirstName { get; set; }
 
         public string MiddleName { get; set; }
 
