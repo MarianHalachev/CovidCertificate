@@ -10,7 +10,7 @@ namespace CovidCertificate.Data.Models
     {
         public int Id { get; set; }
         public DateTime IssueDate { get; set; }
-        public DateTime ValidMonths { get; set; } 
+        public string ValidMonths { get; set; } 
         public bool IsValid { get; set; }
         public User User { get; set; }
     }

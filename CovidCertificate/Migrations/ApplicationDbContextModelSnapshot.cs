@@ -35,8 +35,8 @@ namespace CovidCertificate.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("ValidMonths")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ValidMonths")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

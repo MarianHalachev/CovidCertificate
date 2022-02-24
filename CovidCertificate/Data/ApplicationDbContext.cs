@@ -16,5 +16,6 @@
         public DbSet<CovidCertificate.Data.Models.School> School { get; set; }
         public DbSet<CovidCertificate.Data.Models.Certificate> Certificate { get; set; }
 
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using CovidCertificate.Data.Models;
+﻿using CovidCertificate.Data;
+using CovidCertificate.Data.Models;
 using CovidCertificate.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +12,29 @@ namespace CovidCertificate.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly SignInManager<User> signInManager;
+        private readonly ApplicationDbContext context;
         private readonly UserManager<User> userManager;
-        public AccountController(SignInManager<User> signInManager, UserManager<User> userManager)
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly SignInManager<User> signInManager;
+        public AccountController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager,SignInManager<User> signInManager)
         {
-            this.signInManager = signInManager;
+            this.context = context;
             this.userManager = userManager;
+            this.roleManager = roleManager;
+            this.signInManager = signInManager;
+        }
+
+        public async Task<IActionResult> CreateRole()
+        {
+            var result = await roleManager.CreateAsync(new IdentityRole("User"));
+            return RedirectToAction("Index", "Home");
+
+        }
+        public async Task<IActionResult> AddUserToRole()
+        {
+            User user = await userManager.GetUserAsync(this.User);
+            var result = await userManager.AddToRoleAsync(user, "Admin");
+            return RedirectToAction("Index", "Home");
         }
         public IActionResult Register()
         {

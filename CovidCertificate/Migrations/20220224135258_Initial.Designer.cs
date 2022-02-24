@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CovidCertificate.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220223180526_Initial")]
+    [Migration("20220224135258_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,8 +37,8 @@ namespace CovidCertificate.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("ValidMonths")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ValidMonths")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
