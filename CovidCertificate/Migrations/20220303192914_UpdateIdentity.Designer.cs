@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CovidCertificate.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220224135258_Initial")]
-    partial class Initial
+    [Migration("20220303192914_UpdateIdentity")]
+    partial class UpdateIdentity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -148,6 +148,25 @@ namespace CovidCertificate.Migrations
                     b.HasIndex("SchoolId");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "adminId",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "6e0311a6-39b0-467e-93e3-fe78a0025ba2",
+                            DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@covid.bg",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "admin@covid.bg",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAENXR054XUZeQUhd86Gm0rTQbI5nsd25Fted8iWRA8pmYDQ7i+2iYhsM5cc/sVH/x6A==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -175,6 +194,20 @@ namespace CovidCertificate.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "AdminRoleId",
+                            ConcurrencyStamp = "0aaa4259-95f2-4796-9efb-be3591662ce6",
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = "UserRoleId",
+                            ConcurrencyStamp = "45b01750-3ba2-44bd-8432-913198f8b1ec",
+                            Name = "User"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -262,6 +295,13 @@ namespace CovidCertificate.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "adminId",
+                            RoleId = "AdminRoleId"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

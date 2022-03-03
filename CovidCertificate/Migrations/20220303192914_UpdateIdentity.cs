@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CovidCertificate.Migrations
 {
-    public partial class Initial : Migration
+    public partial class UpdateIdentity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -199,6 +199,26 @@ namespace CovidCertificate.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "AdminRoleId", "0aaa4259-95f2-4796-9efb-be3591662ce6", "Admin", null });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "UserRoleId", "45b01750-3ba2-44bd-8432-913198f8b1ec", "User", null });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DateOfBirth", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "MiddleName", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SchoolId", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "adminId", 0, "6e0311a6-39b0-467e-93e3-fe78a0025ba2", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@covid.bg", true, null, null, false, null, null, "admin@covid.bg", "ADMIN", "AQAAAAEAACcQAAAAENXR054XUZeQUhd86Gm0rTQbI5nsd25Fted8iWRA8pmYDQ7i+2iYhsM5cc/sVH/x6A==", null, false, null, "", false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "AdminRoleId", "adminId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

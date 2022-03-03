@@ -16,7 +16,7 @@ namespace CovidCertificate.Controllers
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<User> signInManager;
-        public AccountController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager,SignInManager<User> signInManager)
+        public AccountController(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
         {
             this.context = context;
             this.userManager = userManager;
@@ -30,52 +30,37 @@ namespace CovidCertificate.Controllers
             return RedirectToAction("Index", "Home");
 
         }
-        public async Task<IActionResult> AddUserToRole()
-        {
-            User user = await userManager.GetUserAsync(this.User);
-            var result = await userManager.AddToRoleAsync(user, "Admin");
-            return RedirectToAction("Index", "Home");
-        }
+
         public IActionResult Register()
         {
             return this.View();
         }
         [HttpPost]
-        public IActionResult Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             var user = new User
             {
-                UserName= model.Username,
+                UserName = model.Username,
                 Email = model.Email,
-                FirstName=model.FirstName,
-                MiddleName=model.MiddleName,
-                LastName=model.LastName
+                FirstName = model.FirstName,
+                MiddleName = model.MiddleName,
+                LastName = model.LastName
             };
-            var result = this.userManager.CreateAsync(user,model.Password).Result;
+            var result = await this.userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                if (this.userManager.Users.Count() == 1)
+                var roleResult = await this.signInManager.UserManager.AddToRoleAsync(user, "User");
+                if (roleResult.Errors.Any())
                 {
-                    var roleResult = this.signInManager.UserManager.AddToRoleAsync(user, "Admin").Result;
-                    if (roleResult.Errors.Any())
-                    {
-                        return this.View();
-                    }
+                    return this.RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    var roleResult = this.signInManager.UserManager.AddToRoleAsync(user, "User").Result;
-                    if (roleResult.Errors.Any())
-                    {
-                        return this.View();
-                    }
-                }
-
-                return this.RedirectToAction("Index", "Home");
             }
-
-            this.signInManager.SignInAsync(user, isPersistent: false);
-            return this.View();
+            else
+            {
+                return this.View(model);
+            }
+            await this.signInManager.SignInAsync(user, isPersistent: false);
+            return this.RedirectToAction("Index", "Home"); 
         }
         public IActionResult Login()
         {
