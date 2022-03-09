@@ -23,8 +23,9 @@ namespace CovidCertificate.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Certificate.ToListAsync());
+
         }
-        [Authorize(Roles = "Admin")]
+
         // GET: Certificates/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -41,8 +42,26 @@ namespace CovidCertificate.Controllers
             }
 
             return View(certificate);
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(certificate);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(certificate);
+
+            if (certificate.IssueDate > DateTime.Now)
+            {
+                Console.WriteLine("Your certificate is expired");
+            }
+            else
+            {
+                Console.WriteLine("Your certificate is valid.");
+            }
+
         }
-        [Authorize(Roles = "Admin")]
+
         // GET: Certificates/Create
         public IActionResult Create()
         {
@@ -54,7 +73,7 @@ namespace CovidCertificate.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Create([Bind("Id,IssueDate,ValidMonths,IsValid")] Certificate certificate)
         {
             if (ModelState.IsValid)
@@ -67,7 +86,7 @@ namespace CovidCertificate.Controllers
         }
 
         // GET: Certificates/Edit/5
-        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -88,7 +107,7 @@ namespace CovidCertificate.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Edit(int id, [Bind("Id,IssueDate,ValidMonths,IsValid")] Certificate certificate)
         {
             if (id != certificate.Id)
