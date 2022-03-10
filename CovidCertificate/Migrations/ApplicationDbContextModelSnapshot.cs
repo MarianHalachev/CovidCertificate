@@ -152,14 +152,14 @@ namespace CovidCertificate.Migrations
                         {
                             Id = "adminId",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "70669dd1-e392-4b41-82b4-bb525f26eb82",
+                            ConcurrencyStamp = "36d1d238-4dd5-44d1-a664-4a08dd544e98",
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@covid.bg",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@covid.bg",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDUatAjz3KJJDnUeFt3gAWVl+6s0/ghraYoHoQNzHIUH21raobxSu2er01js3HCl1A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBAM1aeZx9VVjBlYgkCDdrToSj8yuxx+g0A0qtsuN9atTFaQHgEWe1ITVsUw6uDdjg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -197,14 +197,14 @@ namespace CovidCertificate.Migrations
                         new
                         {
                             Id = "AdminRoleId",
-                            ConcurrencyStamp = "838e4a24-3e09-4458-8584-b0e157220df7",
+                            ConcurrencyStamp = "4e2eb783-9075-44c6-9ba9-48a95aae274f",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "UserRoleId",
-                            ConcurrencyStamp = "13b2d65d-f250-4395-ae79-b6454276308b",
+                            ConcurrencyStamp = "d814a74a-c33c-4e45-aa2e-7b50590f5aad",
                             Name = "User",
                             NormalizedName = "USER"
                         });

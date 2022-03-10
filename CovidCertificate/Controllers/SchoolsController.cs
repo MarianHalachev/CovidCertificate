@@ -7,147 +7,96 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CovidCertificate.Data;
 using CovidCertificate.Data.Models;
+using CovidCertificate.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using CovidCertificate.ViewModels.School;
 
 namespace CovidCertificate.Controllers
 {
     public class SchoolsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICovidService covidService;
+        private readonly UserManager<User> userManager;
 
-        public SchoolsController(ApplicationDbContext context)
+        public SchoolsController(ICovidService covidService, UserManager<User> userManager)
         {
-            _context = context;
+            this.covidService = covidService;
+            this.userManager = userManager;
         }
 
-        // GET: Schools
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.School.ToListAsync());
-        }
-
-        // GET: Schools/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var school = await _context.School
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (school == null)
-            {
-                return NotFound();
-            }
-
-            return View(school);
-        }
-
-        // GET: Schools/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            return View();
+            return this.View();
         }
 
-        // POST: Schools/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,CodeByAdmin,Address")] School school)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create(CreateViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(school);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(school);
+            this.covidService.CreateSchool(model.Name,model.CodeByAdmin,model.Address);
+            return this.RedirectToAction("Index", "Home");
         }
 
-        // GET: Schools/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Authorize(Roles = "Admin,User")]
+        public IActionResult Details(int id)
         {
-            if (id == null)
+            var school = this.covidService.GetSchoolById(id);
+            var model = new DetailsViewModel()
             {
-                return NotFound();
-            }
+             Id=school.Id,
+             CodeByAdmin = school.CodeByAdmin,
+             Name = school.Name,
+             Address =school.Address
+            };
 
-            var school = await _context.School.FindAsync(id);
-            if (school == null)
-            {
-                return NotFound();
-            }
-            return View(school);
+            return this.View(model);
         }
 
-        // POST: Schools/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Edit(int id)
+        {
+            var school = this.covidService.GetSchoolById(id);
+            var model = new DetailsViewModel()
+            {
+                Id = school.Id,
+                CodeByAdmin = school.CodeByAdmin,
+                Name = school.Name,
+                Address = school.Address
+            };
+            return this.View(model);
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CodeByAdmin,Address")] School school)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Edit(DetailsViewModel model)
         {
-            if (id != school.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(school);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SchoolExists(school.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(school);
+            this.covidService.EditSchool(model.Id,model.Name,model.CodeByAdmin,model.Address);
+            return this.RedirectToAction("Index", "Home");
         }
 
-        // GET: Schools/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Delete(int id)
         {
-            if (id == null)
+            var school = this.covidService.GetSchoolById(id);
+            var model = new DetailsViewModel()
             {
-                return NotFound();
-            }
-
-            var school = await _context.School
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (school == null)
-            {
-                return NotFound();
-            }
-
-            return View(school);
+                Id = school.Id,
+                CodeByAdmin = school.CodeByAdmin,
+                Name = school.Name,
+                Address = school.Address
+            };
+            return this.View(model);
         }
 
-        // POST: Schools/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Delete(DetailsViewModel model)
         {
-            var school = await _context.School.FindAsync(id);
-            _context.School.Remove(school);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool SchoolExists(int id)
-        {
-            return _context.School.Any(e => e.Id == id);
+            this.covidService.DeleteSchool(model.Id);
+            return this.RedirectToAction("Index", "Home");
         }
     }
 }

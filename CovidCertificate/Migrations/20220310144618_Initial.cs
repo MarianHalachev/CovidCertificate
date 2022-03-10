@@ -203,17 +203,17 @@ namespace CovidCertificate.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "AdminRoleId", "838e4a24-3e09-4458-8584-b0e157220df7", "Admin", "ADMIN" });
+                values: new object[] { "AdminRoleId", "4e2eb783-9075-44c6-9ba9-48a95aae274f", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "UserRoleId", "13b2d65d-f250-4395-ae79-b6454276308b", "User", "USER" });
+                values: new object[] { "UserRoleId", "d814a74a-c33c-4e45-aa2e-7b50590f5aad", "User", "USER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DateOfBirth", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "MiddleName", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SchoolId", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "adminId", 0, "70669dd1-e392-4b41-82b4-bb525f26eb82", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@covid.bg", true, null, null, false, null, null, "admin@covid.bg", "ADMIN", "AQAAAAEAACcQAAAAEDUatAjz3KJJDnUeFt3gAWVl+6s0/ghraYoHoQNzHIUH21raobxSu2er01js3HCl1A==", null, false, null, "", false, "admin" });
+                values: new object[] { "adminId", 0, "36d1d238-4dd5-44d1-a664-4a08dd544e98", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@covid.bg", true, null, null, false, null, null, "admin@covid.bg", "ADMIN", "AQAAAAEAACcQAAAAEBAM1aeZx9VVjBlYgkCDdrToSj8yuxx+g0A0qtsuN9atTFaQHgEWe1ITVsUw6uDdjg==", null, false, null, "", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

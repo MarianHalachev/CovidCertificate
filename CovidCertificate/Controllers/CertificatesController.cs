@@ -8,169 +8,99 @@ using Microsoft.EntityFrameworkCore;
 using CovidCertificate.Data;
 using CovidCertificate.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using CovidCertificate.ViewModels.Certificate;
+using CovidCertificate.Services.Interfaces;
 
 namespace CovidCertificate.Controllers
 {
     public class CertificatesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICovidService covidService;
+        private readonly UserManager<User> userManager;
 
-        public CertificatesController(ApplicationDbContext context)
+        public CertificatesController(ICovidService covidService, UserManager<User> userManager)
         {
-            _context = context;
-        }
-        // GET: Certificates
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Certificate.ToListAsync());
-
+            this.covidService = covidService;
+            this.userManager = userManager;
         }
 
-        // GET: Certificates/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var certificate = await _context.Certificate
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (certificate == null)
-            {
-                return NotFound();
-            }
-
-            return View(certificate);
-
-            if (ModelState.IsValid)
-            {
-                _context.Add(certificate);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(certificate);
-
-            if (certificate.IssueDate > DateTime.Now)
-            {
-                Console.WriteLine("Your certificate is expired");
-            }
-            else
-            {
-                Console.WriteLine("Your certificate is valid.");
-            }
-
-        }
-
-        // GET: Certificates/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            return View();
+            return this.View();
         }
 
-        // POST: Certificates/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> Create([Bind("Id,IssueDate,ValidMonths,IsValid")] Certificate certificate)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create(CreateViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(certificate);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(certificate);
+            this.covidService.CreateCertificate(model.IssueDate, model.ValidMonths, model.IsValid);
+            return this.RedirectToAction("Index", "Home");
         }
 
-        // GET: Certificates/Edit/5
-
-        public async Task<IActionResult> Edit(int? id)
+        [Authorize(Roles = "Admin,User")]
+        public IActionResult Details(int id)
         {
-            if (id == null)
+            var certificate = this.covidService.GetCertificateById(id);
+            var model = new DetailsViewModel()
             {
-                return NotFound();
-            }
+                Id = certificate.Id,
+                IssueDate = certificate.IssueDate,
+                ValidMonths = certificate.ValidMonths,
+                IsValid = certificate.IsValid,
+                User = certificate.User
+            };
 
-            var certificate = await _context.Certificate.FindAsync(id);
-            if (certificate == null)
-            {
-                return NotFound();
-            }
-            return View(certificate);
+            return this.View(model);
         }
 
-        // POST: Certificates/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Edit(int id)
+        {
+            var certificate = this.covidService.GetCertificateById(id);
+            var model = new DetailsViewModel()
+            {
+                Id = certificate.Id,
+                IssueDate = certificate.IssueDate,
+                ValidMonths = certificate.ValidMonths,
+                IsValid = certificate.IsValid,
+                User = certificate.User
+            };
+            return this.View(model);
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IssueDate,ValidMonths,IsValid")] Certificate certificate)
-        {
-            if (id != certificate.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(certificate);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CertificateExists(certificate.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(certificate);
-        }
         [Authorize(Roles = "Admin")]
-        // GET: Certificates/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Edit(DetailsViewModel model)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var certificate = await _context.Certificate
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (certificate == null)
-            {
-                return NotFound();
-            }
-
-            return View(certificate);
+            this.covidService.EditCertificate(model.Id, model.IssueDate, model.ValidMonths, model.IsValid);
+            return this.RedirectToAction("Index", "Home");
         }
 
-        // POST: Certificates/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult Delete(int id)
         {
-            var certificate = await _context.Certificate.FindAsync(id);
-            _context.Certificate.Remove(certificate);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var certificate = this.covidService.GetCertificateById(id);
+            var model = new DetailsViewModel()
+            {
+                Id = certificate.Id,
+                IssueDate = certificate.IssueDate,
+                ValidMonths = certificate.ValidMonths,
+                IsValid = certificate.IsValid,
+                User = certificate.User
+            };
+            return this.View(model);
         }
 
-        private bool CertificateExists(int id)
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Delete(DetailsViewModel model)
         {
-            return _context.Certificate.Any(e => e.Id == id);
+            this.covidService.DeleteCertificate(model.Id);
+            return this.RedirectToAction("Index", "Home");
         }
+        
     }
 }
